@@ -1,0 +1,407 @@
+html
+{
+    overflow-y:hidden;
+}
+
+body
+{
+    color:white;
+    background-color:#000000;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:18pt;
+    margin:0px;
+    padding:0px;
+}
+
+/* CONTROL PANEL */
+
+div.control_panel
+{
+    align:center;
+    width:100%;
+    margin-bottom:2px;
+    color:#BFBFBF;
+    font-size:10pt;
+}
+
+div.control_panel a,
+div.control_panel a:visited
+{
+    color:#BFBFBF;
+}
+
+div.wrapper_cp
+{
+    border:1px dotted red;
+}
+
+/* PAGE SECTIONS */
+
+div.wrapper
+{
+    /* 15" 1024x768   12" 800x600 */
+    margin:0px;
+    padding:0px;
+
+    /*width:1024px;   removed to enable full width of screen*/
+    /* height:768px;*/
+    overflow:hidden;
+}
+
+div.heading
+{
+    /*	height:36px;*/
+    min-height:36px;
+    color:white;
+    background-color:#002BA4;
+    padding:5px 4px 6px 4px;
+    font-size:26pt;
+    font-weight:normal;
+}
+div.interleave
+{
+    color:yellow;
+    background-color:#002BA4;
+    /*	padding:0px 4px 6px 4px;*/
+    padding:0px 4px 0px 4px;
+    font-size:22pt;
+    font-weight:normal;
+    /*	float:left;*/
+    width:100%;
+    /*	max-height:100px;*/
+    max-height:101px;
+    overflow:hidden;
+}
+
+div.departures
+{
+    float:left;
+    text-align:left;
+}
+
+div.departures span.station
+{
+    /*color:#BFBFBF;*/
+    color:white;
+}
+
+div.last_updated
+{
+    float:right;
+    text-align:right;
+    font-size:20pt;
+    color:#BFBFBF;
+}
+
+div.last_updated_sn
+{
+    float:right;
+    text-align:right;
+    font-size:20pt;
+    color:#BFBFBF;
+    position:relative;
+    top:5px;
+}
+
+div.last_updated span.update_time,
+div.last_updated_sn span.update_time
+{
+    color:white;
+}
+
+div.contents
+{
+    clear:both;
+    overflow:hidden;
+    /* height:727px;*/
+}
+
+div.contents_sn
+{
+    clear:both;
+    overflow:hidden;
+    height:598px;
+}
+
+div.contents_sn_noheader
+{
+    clear:both;
+    overflow:hidden;
+    height:604px;
+}
+
+div.interleave_sn
+{
+    height:112px;
+    color:black;
+    font-weight:bold;
+    background-color:#BFBFBF;
+    border-top:1px solid white;
+    padding:5px 4px 5px 4px;
+}
+
+div.interleave_sn_scrollable
+{
+    height:112px;
+    line-height:28px;
+    font-size:18pt;
+    overflow:hidden;
+}
+
+div.footer
+{
+    height:30px;
+    color:white;
+    background-color:#002BA4;
+    border-top:1px solid white;
+    padding:5px 4px 5px 4px;
+    font-size:20pt;
+    font-weight:normal;
+}
+
+/* DEPARTURE BOARD */
+
+table
+{
+    font-family:Arial;
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+    margin-top:0px;
+}
+
+tr.bottom_row
+{
+    border-bottom:1px solid #5F5F5F;
+}
+
+/* header row */
+
+tr.header {
+    font-size:26pt;
+    height:40px;
+    margin:0px;
+}
+
+tr.header_small {
+    font-size:20pt;
+}
+
+table th {
+    border-collapse:collapse;
+    color:white;
+    background-color:#002BA4;
+    padding:3px 4px 3px 4px;
+    border-bottom:solid 1px white;
+    text-align:left;
+    font-weight:normal;
+}
+
+th.time
+{
+    width:125px;
+}
+
+th.plat
+{
+    width:130px;
+    text-align:center;
+}
+
+th.exp
+{
+    width:230px;
+    text-align:right;
+}
+
+/* data row */
+
+table td
+{
+    text-align:left;
+    padding-top:2px;
+    padding-left:4px;
+    padding-right:4px;
+}
+
+td.time
+{
+    font-size:34pt;
+}
+td.no_trains
+{
+    font-size:34pt;
+    padding:52px;
+}
+td.dest
+{
+    font-size:34pt;
+    color:yellow;
+    font-style:bold;
+}
+th.incident
+{
+    width: 25px;
+    text-align: right;
+}
+td.plat
+{
+    font-size:34pt;
+    text-align:center;
+}
+
+td.plat span.chg
+{
+    font-weight:bold;
+    color:black;
+    background-color:white;
+    margin:0px;
+    padding:0px 10px 0px 10px;
+}
+
+td.exp
+{
+    font-size:34pt;
+    text-align:right;
+}
+
+td.cancelled span
+{
+    font-weight:bold;
+    color:black;
+    background-color:white;
+    margin:0px;
+    padding:0px 5px 0px 5px;
+}
+
+div.by_request
+{
+    color:yellow;
+    /*	background-color:#2F2F2F; */
+    margin-bottom:2px;
+}
+
+/* calling points */
+
+td.calls_at
+{
+    color:#BFBFBF;
+    padding-top:0px;
+    padding-bottom:2px;
+    line-height:28px;
+}
+
+td.indent
+{
+    color:#BFBFBF;
+    padding-top:0px;
+    padding-bottom:4px;
+    line-height:28px;
+}
+
+div.via
+{
+    color:yellow;
+}
+
+div.tyrell
+{
+    color:white;
+}
+
+td.calls_at span.ca_header
+{
+    color:white;
+}
+
+td.calls_at span.dest
+{
+    /*	color:white; */
+}
+
+td.calls_at span.toc
+{
+    /*	color:white; */
+}
+
+td.calls_at span.lr_header
+{
+    color:white;
+}
+
+td.calls_at span.lr_text
+{
+}
+
+div.scrollable
+{
+    overflow:hidden;
+    width:100%;
+    max-height:84px;
+}
+
+div.scrollablesmall
+{
+    overflow:hidden;
+    width:100%;
+    max-height:56px;
+}
+
+div.assocnotices
+{
+    /*width:100%;*/
+    color:#BFBFBF;
+}
+
+div.notscrollable
+{
+    margin-bottom:2px;
+    overflow:hidden;
+    width:100%;
+}
+
+/* SPECIAL NOTICES */
+
+div.overwrite_sn
+{
+    border-top:1px solid white;
+    padding:19px 20px 19px 20px;
+    text-align:center;
+}
+
+div.overwrite_sn_pg
+{
+    border-top:1px solid white;
+    /*	padding:25px 20px 24px 20px;*/
+    text-align:right;
+}
+
+div.overwrite_sn_scrollable
+{
+    border-top:1px solid white;
+    padding:19px 20px 19px 20px;
+    height:675px;
+    font-size:30pt;
+    overflow:hidden;
+    text-align:center;
+}
+
+div.overwrite_sn_paged
+{
+    border-top:1px solid white;
+    /*	padding:19px 20px 19px 20px; */
+    text-align:center;
+    height:638px;
+    /*	font-size:30pt; */
+    overflow:hidden;
+}
+
+a:visited, a:link
+{
+    color: cyan;
+    text-decoration: none;
+}
+.TriangleColour
+{
+    color: yellow;
+}
