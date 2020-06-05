@@ -54,7 +54,7 @@ function parseService($serviceData) {
     return $service;
 }
 
-$ldbws = new OpenLDBWS("TOKEN HERE");
+$ldbws = new OpenLDBWS(file_get_contents('access_token.txt'));
 
 $data = $ldbws->GetDepBoardWithDetails($rows,$_GET["crs"])->GetStationBoardResult;
 
