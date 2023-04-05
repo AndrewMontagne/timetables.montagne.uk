@@ -1,8 +1,6 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-    "http://www.w3.org/TR/html4/loose.dtd">
+<!doctype HTML>
 <html>
 <head>
-    <META http-equiv="Content-Type" content="text/html">
     <title><?=$stationName;?> Train Times</title>
     <META HTTP-EQUIV="expires" CONTENT="now">
     <META charset="utf-8">
@@ -10,21 +8,20 @@
     <link rel="stylesheet" href="static/webcis.css" type="text/css">
     <style>
         #nrelogo {
-            position: fixed;
+            position: absolute;
             right: 10px;
             bottom: 10px;
             width: 480px;
-            z-index: -1;
+            background-color: #0006;
         }
         tr {
-            background-color: rgba(0,0,0,0.5);
-            text-shadow: 0px 0px 3px black;
+            background-color: #000;
         }
     </style>
 </head>
 <body onload="init_scroll();init_notice();init_refresh();">
 <script type="text/javascript" src="static/webcis_scroll.js"></script>
-<img src="static/nre.png" id="nrelogo">
+
 <div class="wrapper">
     <div class="heading">
         <div class="departures">
@@ -49,23 +46,46 @@
             <?php $i = 0; foreach ($services as $service): ?>
             <tr>
                 <td class="time"><?=$service->std;?></td>
-                <td class="dest"><?=$service->destination;?></td>
+                <td class="dest">
+                    <?php foreach($service->destinations as $destination) { ?>
+                    <div>
+                        <span><?= $destination->name ?></span>
+                        <?php if(isset($destination->via)): ?>
+                            <div class="via"><?=$destination->via;?></div>
+                        <?php endif; ?>
+                    </div>
+                    <?php } ?>
+                </td>
                 <td class="plat"><?=$service->platform;?></td>
                 <td class="incident"></td>
-                <td class="exp on_time"><?=$service->etd;?></td>
+                <td class="exp <?php
+                    switch ($service->etd) {
+                        case "Cancelled":
+                            echo("cancelled");
+                            break;
+                        case "On time":
+                            echo("on-time");
+                            break;
+                        case "Delayed":
+                            echo("delayed");
+                            break;
+                    } ?>"><span><?=$service->etd;?></span></td>
             </tr>
             <tr class="bottom_row">
                 <td class="indent" id="indent<?=$i;?>"></td>
                 <td class="calls_at" colspan="4">
                     <div class="scrollable" id="scroll<?=$i;?>">
-                        <?php if(isset($service->via)): ?>
-                            <div class="via"><?=$service->via;?></div>
-                        <?php endif; ?>
+                        <?php foreach($service->callingPoints as $idx=>$callingService) { ?>
+                        <div>
                         <span class="ca_header">Calling at:</span>
-                        <?=implode(", ", $service->callingPoints);?>
+                        <?=implode(", ", $callingService->callingAt);?>
+                        <?php if($idx==0): ?>
                         <span class="toc">
                             (<?=$service->toc;?>)
                         </span>
+                        <?php endif; ?>
+                        </div>
+                        <?php } ?>
                     </div>
                     <?php if(count($service->notes) > 0):?>
                     <div class="tyrell">
@@ -80,6 +100,9 @@
     </tr>
     </table>
 </div>
+</div>
+<div>
+    <img src="static/nre.png" id="nrelogo">
 </div>
 </body>
 </html>

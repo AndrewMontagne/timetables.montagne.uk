@@ -5,8 +5,8 @@ html
 
 body
 {
-    color:white;
-    background-color:#000000;
+    color:#fff;
+    background-color:#000;
     font-family:Arial, Helvetica, sans-serif;
     font-size:18pt;
     margin:0px;
@@ -163,7 +163,6 @@ div.footer
 
 table
 {
-    font-family:Arial;
     width:100%;
     border-collapse:collapse;
     table-layout:fixed;
@@ -267,7 +266,7 @@ td.exp
 
 td.cancelled span
 {
-    font-weight:bold;
+    font-weight:normal;
     color:black;
     background-color:white;
     margin:0px;
@@ -299,9 +298,10 @@ td.indent
     line-height:28px;
 }
 
-div.via
-{
-    color:yellow;
+div.via {
+  color: #ff0;
+  padding-bottom: 1px;
+  font-size: 18pt;
 }
 
 div.tyrell
