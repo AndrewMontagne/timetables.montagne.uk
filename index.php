@@ -110,8 +110,15 @@ function parseService($serviceData) {
     $service = new stdClass();
     $service->std = $serviceData->std;
     $service->etd = $serviceData->etd;
-    $service->toc = $serviceData->operator;
     $service->realtime = strtotime("$service->std today");
+
+    $toc_short = [
+        "London North Eastern Railway"  => "LNER",
+        "East Midlands Railway"         => "EMR",
+        "Great Western Railway"         => "GWR",
+    ];
+    $toc = $serviceData->operator;
+    $service->toc = $toc_short[$toc] ?? $toc;
 
     if(isset($serviceData->formation->coaches)){
         $service->formation = togFormation($serviceData->formation->coaches->coach);
@@ -124,7 +131,7 @@ function parseService($serviceData) {
     }
 
     if($serviceData->serviceType == "train") {
-        $service->platform = isset($serviceData->platform) ? $serviceData->platform : "";
+        $service->platform = isset($serviceData->platform) ? $serviceData->platform : "-";
     } else {
         $service->platform = strtoupper($serviceData->serviceType);
     }

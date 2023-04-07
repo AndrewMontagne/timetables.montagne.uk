@@ -200,6 +200,11 @@ th.time
 {
     width:125px;
 }
+th.toc
+{
+    width:270px;
+    text-align:center;
+}
 th.coaches
 {
     width:130px;
@@ -213,8 +218,8 @@ th.plat
 
 th.exp
 {
-    width:230px;
-    text-align:right;
+    width:220px;
+    text-align:center;
 }
 
 /* data row */
@@ -242,10 +247,10 @@ td.dest
     color:yellow;
     font-style:bold;
 }
-th.incident
+td.toc
 {
-    width: 25px;
-    text-align: right;
+    font-size: 20pt;
+    text-align: center;
 }
 td.coaches
 {
@@ -270,7 +275,7 @@ td.plat span.chg
 td.exp
 {
     font-size:34pt;
-    text-align:right;
+    text-align:center;
 }
 
 td.cancelled span
