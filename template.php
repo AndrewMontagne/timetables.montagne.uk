@@ -39,6 +39,7 @@
             <tr class="header_small">
                 <th class="time">Time</th>
                 <th class="dest">Destination</th>
+                <th class="coaches">Coaches</th>
                 <th class="plat">Plat</th>
                 <th class="incident"></th>
                 <th class="exp">Expected</th>
@@ -56,6 +57,7 @@
                     </div>
                     <?php } ?>
                 </td>
+                <td class="coaches"><?=isset($service->length) ? $service->length : "" ?></td>
                 <td class="plat"><?=$service->platform;?></td>
                 <td class="incident"></td>
                 <td class="exp <?php

@@ -200,7 +200,11 @@ th.time
 {
     width:125px;
 }
-
+th.coaches
+{
+    width:130px;
+    text-align:center;
+}
 th.plat
 {
     width:130px;
@@ -242,6 +246,11 @@ th.incident
 {
     width: 25px;
     text-align: right;
+}
+td.coaches
+{
+    font-size:34pt;
+    text-align:center;
 }
 td.plat
 {
