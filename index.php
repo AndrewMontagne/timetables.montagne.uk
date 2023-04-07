@@ -12,6 +12,100 @@ if(isset($_GET["rows"])) {
     $rows = (int)$_GET["rows"];
 }
 
+function forceArray($obj) {
+    if(is_array($obj)) {
+        return $obj;
+    } else {
+        return [$obj];
+    }
+}
+
+function togFormation($formData) {
+    $carriages = [];
+
+    $unitIndex = 0;
+
+    $lastUnitLetter = "A";
+
+    foreach($formData as $formCar) {
+        $letter = substr($formCar->number, 0, 1);
+        if(ctype_alpha($letter) && $letter != $lastUnitLetter) {
+            $unitIndex++;
+            $lastUnitLetter = $letter;
+        }
+
+        $carriage = new stdClass();
+        $carriage->class = $formCar->coachClass;
+        $carriage->hasToilet = FALSE;
+
+        if (isset($formCar->toilet)) {
+            $carriage->hasToilet = $formCar->toilet->_!="None";
+            $carriage->toiletType = $formCar->toilet->_;
+            $carriage->toiletInService = $formCar->toilet->status=="InService";
+        }
+
+        $carriage->loading = 0;
+        if (isset($formCar->loading)) {
+            $carriage->loading = $formCar->loading;
+        }
+
+        $carriage->unit = $unitIndex;
+
+        $carriages[] = $carriage;
+    }
+    return $carriages;
+}
+
+function terminals($darwinTerminals) {
+    $darwinTerminals = forceArray($darwinTerminals);
+
+    $terminalsOut = [];
+
+    foreach($darwinTerminals as $darwinTerminal) {
+        $terminal = new stdClass();
+        $terminal->crs = $darwinTerminal->crs;
+        $terminal->name = $darwinTerminal->locationName;
+        if(isset($darwinTerminal->via)) {
+            $terminal->via = $darwinTerminal->via;
+        }
+
+        $terminalsOut[] = $terminal;
+    }
+
+    return $terminalsOut;
+}
+
+function callingPoints($callingPortionsRaw) {
+    $callingPortions = forceArray($callingPortionsRaw);
+
+    $portionsOutList = [];
+
+    foreach($callingPortions as $portionIndex=>$portion) {
+
+        $assoc = new stdClass();
+        $assoc->serviceType = $portion->serviceType;
+        $assoc->changeRequired = $portion->serviceChangeRequired;
+        $assoc->isCancelled = $portion->assocIsCancelled;
+        $assoc->callingAt = [];
+
+        $callingPointList = forceArray($portion->callingPoint);
+
+        foreach($callingPointList as $callingPointData) {
+            if (!isset($callingPointData->et) || $callingPointData->et == "On time") {
+                $dt = $callingPointData->st;
+            } else {
+                $dt = $callingPointData->et;
+            }
+
+            $assoc->callingAt[] = $callingPointData->locationName . " (" . $dt . ")";
+        }
+
+        $portionsOutList[] = $assoc;
+    }
+
+    return $portionsOutList;
+}
+
 function parseService($serviceData) {
     $service = new stdClass();
     $service->std = $serviceData->std;
@@ -19,6 +113,15 @@ function parseService($serviceData) {
     $service->toc = $serviceData->operator;
     $service->realtime = strtotime("$service->std today");
 
+    if(isset($serviceData->formation->coaches)){
+        $service->formation = togFormation($serviceData->formation->coaches->coach);
+    }
+
+    if(isset($serviceData->length)) {
+        $service->length = $serviceData->length;
+    } else if (isset($service->formation)) {
+        $service->length = count($service->formation);
+    }
 
     if($serviceData->serviceType == "train") {
         $service->platform = isset($serviceData->platform) ? $serviceData->platform : "";
@@ -26,28 +129,25 @@ function parseService($serviceData) {
         $service->platform = strtoupper($serviceData->serviceType);
     }
 
-    $service->origin = $serviceData->origin->location->locationName;
-    $service->destination = $serviceData->destination->location->locationName;
-    if(isset($serviceData->destination->location->via)) {
-        $service->via = $serviceData->destination->location->via;
-    }
+    $service->origins = terminals($serviceData->origin->location);
+    $service->destinations = terminals($serviceData->destination->location);
+
     $service->notes = [];
-    if(isset($serviceData->length)){
-        $service->notes[] = "This train is formed of $serviceData->length coaches.";
+    if(isset($service->length)){
+        $service->notes[] = "This train is formed of $service->length coaches.";
     }
+
+    if(isset($serviceData->cancelReason)){
+        $service->notes[] = $serviceData->cancelReason . ".";
+    }
+
     if(isset($serviceData->delayReason)){
         $service->notes[] = $serviceData->delayReason . ".";
     }
 
     $service->callingPoints = [];
     if(isset($serviceData->subsequentCallingPoints)) {
-        if (is_array($serviceData->subsequentCallingPoints->callingPointList->callingPoint)) {
-            foreach ($serviceData->subsequentCallingPoints->callingPointList->callingPoint as $callingPointData) {
-                $service->callingPoints[] = $callingPointData->locationName . " (" . $callingPointData->st . ")";
-            }
-        } else {
-            $service->callingPoints[] = $serviceData->subsequentCallingPoints->callingPointList->callingPoint->locationName . " (" . $serviceData->subsequentCallingPoints->callingPointList->callingPoint->st . ")";
-        }
+        $service->callingPoints = callingPoints($serviceData->subsequentCallingPoints->callingPointList);
     }
 
     return $service;
@@ -64,42 +164,36 @@ $generatedTime = date("H:i", strtotime($data->generatedAt));
 $messages = [];
 
 if(isset($data->nrccMessages)) {
-    if(is_array($data->nrccMessages->message)) {
-        foreach ($data->nrccMessages->message as $messageData) {
-            $messages[] = rtrim(strip_tags($messageData->_), ".") . ".";
-        }
-    } else {
-        $messages[] = rtrim(strip_tags($data->nrccMessages->message->_), ".") . ".";
+    $messagesRaw = forceArray($data->nrccMessages->message);
+
+    foreach ($messagesRaw as $messageData) {
+        $messages[] = rtrim(str_ireplace("more details can be found in latest travel news", "", strip_tags($messageData->_)), ". ") . ".";
     }
 }
 
 $services = [];
 
 if(isset($data->trainServices)) {
-    if(is_array($data->trainServices->service)) {
-        foreach ($data->trainServices->service as $serviceData) {
-            $services[] = parseService($serviceData);
-        }
-    } else {
-        $services[] = parseService($data->trainServices->service);
+    $trainServicesRaw = forceArray($data->trainServices->service);
+
+    foreach ($trainServicesRaw as $serviceData) {
+        $services[] = parseService($serviceData);
     }
 }
+
 if(isset($data->busServices)) {
-    if(is_array($data->busServices->service)) {
-        foreach ($data->busServices->service as $serviceData) {
-            $services[] = parseService($serviceData);
-        }
-    } else {
-        $services[] = parseService($data->busServices->service);
+    $busServicesRaw = forceArray($data->busServices->service);
+
+    foreach ($busServicesRaw as $serviceData) {
+        $services[] = parseService($serviceData);
     }
 }
+
 if(isset($data->ferryServices)) {
-    if(is_array($data->ferryServices->service)) {
-        foreach ($data->ferryServices->service as $serviceData) {
-            $services[] = parseService($serviceData);
-        }
-    } else {
-        $services[] = parseService($data->ferryServices->service);
+    $ferryServicesRaw = forceArray($data->ferryServices->service);
+
+    foreach ($ferryServicesRaw as $serviceData) {
+        $services[] = parseService($serviceData);
     }
 }
 
