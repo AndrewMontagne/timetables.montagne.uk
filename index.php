@@ -4,8 +4,7 @@ require_once "OpenLDBWS.php";
 date_default_timezone_set('Europe/London');
 
 if(!isset($_GET["crs"])) {
-    echo "Please specify the crs as a query parameter.";
-    die();
+    include "station_picker.php";
 }
 
 $rows = 10;
@@ -56,7 +55,7 @@ function parseService($serviceData) {
 
 $ldbws = new OpenLDBWS(file_get_contents('access_token.txt'));
 
-$data = $ldbws->GetDepBoardWithDetails($rows,$_GET["crs"])->GetStationBoardResult;
+$data = $ldbws->GetDepBoardWithDetails($rows,strtoupper($_GET["crs"]))->GetStationBoardResult;
 
 $stationName = $data->locationName;
 
