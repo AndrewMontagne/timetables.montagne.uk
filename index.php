@@ -5,6 +5,7 @@ date_default_timezone_set('Europe/London');
 
 if(!isset($_GET["crs"])) {
     include "station_picker.php";
+    die();
 }
 
 $rows = 10;
@@ -18,6 +19,12 @@ function forceArray($obj) {
     } else {
         return [$obj];
     }
+}
+
+function startsWithVowel($str) {
+    $original = strtolower($str);
+    $vowels = array('a','e','i','o','u');
+    return in_array($original[0], $vowels);
 }
 
 function togFormation($formData) {
@@ -91,13 +98,13 @@ function callingPoints($callingPortionsRaw) {
         $callingPointList = forceArray($portion->callingPoint);
 
         foreach($callingPointList as $callingPointData) {
-            if (!isset($callingPointData->et) || $callingPointData->et == "On time") {
-                $dt = $callingPointData->st;
-            } else {
-                $dt = $callingPointData->et;
-            }
+            $dt = $callingPointData->st;
 
-            $assoc->callingAt[] = $callingPointData->locationName . " (" . $dt . ")";
+            if ($callingPointData->et == "Cancelled") {
+                $assoc->callingAt[] = "<s>" . $callingPointData->locationName . " (" . $dt . ")</s>";
+            } else {
+                $assoc->callingAt[] = $callingPointData->locationName . " (" . $dt . ")";
+            }
         }
 
         $portionsOutList[] = $assoc;
@@ -133,15 +140,14 @@ function parseService($serviceData) {
     $service->destinations = terminals($serviceData->destination->location);
 
     $service->notes = [];
-    if(isset($service->length)){
+    
+    if(isset($serviceData->cancelReason) && $service->etd == "Cancelled"){
+        $service->notes[] = $serviceData->cancelReason . ".";
+    } else if(isset($service->length)){
         $service->notes[] = "This train is formed of $service->length coaches.";
     }
 
-    if(isset($serviceData->cancelReason)){
-        $service->notes[] = $serviceData->cancelReason . ".";
-    }
-
-    if(isset($serviceData->delayReason)){
+    if(isset($serviceData->delayReason) && $service->etd != "On time" && $service->etd != "Cancelled"){
         $service->notes[] = $serviceData->delayReason . ".";
     }
 
@@ -150,10 +156,14 @@ function parseService($serviceData) {
         $service->callingPoints = callingPoints($serviceData->subsequentCallingPoints->callingPointList);
     }
 
+    $toc = $service->toc;
+    $a_an = startsWithVowel($toc) ? "An " : "A ";
+    $service->notes[] = $a_an . $toc . " service.";
+
     return $service;
 }
 
-$ldbws = new OpenLDBWS(file_get_contents('access_token.txt'));
+$ldbws = new OpenLDBWS(rtrim(file_get_contents('access_token.txt')));
 
 $data = $ldbws->GetDepBoardWithDetails($rows,strtoupper($_GET["crs"]))->GetStationBoardResult;
 

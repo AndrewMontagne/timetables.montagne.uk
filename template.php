@@ -79,17 +79,12 @@
                         <div>
                         <span class="ca_header">Calling at:</span>
                         <?=implode(", ", $callingService->callingAt);?>
-                        <?php if($idx==0): ?>
-                        <span class="toc">
-                            (<?=$service->toc;?>)
-                        </span>
-                        <?php endif; ?>
                         </div>
                         <?php } ?>
                     </div>
                     <?php if(count($service->notes) > 0):?>
                     <div class="tyrell">
-                        Note: <?=implode(" ", $service->notes);?>
+                        <?=implode(" ", $service->notes);?>
                     </div>
                     <?php endif; ?>
                 </td>

@@ -2960,7 +2960,7 @@ $station_data = [
         <script type='text/javascript'>
             function selectStation() {
                 var crs = document.getElementById('crspicker').value;
-                location.href = 'https://timetables.montagne.uk?crs=' + crs;
+                location.href = 'https://timetables.lol?crs=' + crs;
             }
         </script>
     </head>
